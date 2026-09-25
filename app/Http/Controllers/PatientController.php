@@ -642,6 +642,7 @@ public function addChannel(Request $request)
 
         $app->number = $num;
         $app->patient_id = $pid;
+        $app->scheduled_at = $request->scheduled_at ?: now();
         $app->save();
         try {
             $app->save();

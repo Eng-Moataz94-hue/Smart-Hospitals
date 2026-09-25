@@ -34,6 +34,11 @@
                 <h3 id="appt_num"></h3>
             </div>
             <a href="#" class="icon"><i class="ion ion-person-add"></i></a>
+            <div class="form-group" style="padding: 10px;">
+                <label for="scheduled_at" class="control-label">{{ __('Scheduled At') }}</label>
+                <input type="datetime-local" name="scheduled_at" id="scheduled_at"
+                       value="{{ now()->format('Y-m-d\TH:i') }}" class="form-control">
+            </div>
             <a href="#" class="small-box-footer">{{__('Create Channel')}}<i class="fas fa-plus-circle"></i></a>
         </div>
     </div>
@@ -196,6 +201,7 @@
         var data=new FormData;
         data.append('_token','{{csrf_token()}}');
         data.append('id',patientid);
+        data.append('scheduled_at', document.getElementById('scheduled_at').value);
         $.ajax({
             type: "post",
             url: "{{route('makeappoint')}}",
