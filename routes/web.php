@@ -22,7 +22,7 @@ Route::get('/', 'HomeController@index');
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
 Route::post('login', ['as' => '', 'uses' => 'Auth\LoginController@login']);
 Route::post('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
-Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@register']);
+Route::post('/register', ['as' => 'register', 'uses' => 'Auth\RegisterController@register'])->middleware('auth', 'admin');
 
 // Password Reset Routes...
 Route::post('password/email', ['as' => 'password.email', 'uses' => 'Auth\ForgotPasswordController@sendResetLinkEmail']);
@@ -96,7 +96,7 @@ Route::get('/myattend', ['as' => 'myattend', 'uses' => 'AttendController@myatten
 Route::get('/attendmore', ['as' => 'attendmore', 'uses' => 'AttendController@attendmore'])->middleware('auth', 'admin', 'lang');
 Route::get('/attendance', ['as' => 'attendance', 'uses' => 'AttendController@markattendance'])->middleware('guest');
 Route::post('/getyearattendance', ['as' => 'getyearattendance', 'uses' => 'AttendController@myattend'])->middleware('auth', 'lang');
-Route::post('/getattendancebyid', ['as' => 'getattendancebyid', 'uses' => 'AttendController@attendmore'])->middleware('auth', 'lang');
+Route::post('/getattendancebyid', ['as' => 'getattendancebyid', 'uses' => 'AttendController@attendmore'])->middleware('auth', 'admin', 'lang');
 
 // Admin Routes For User Registration and Management
 Route::get('/regfinger', ['as' => 'regfinger', 'uses' => 'UserController@showRegFingerprint'])->middleware('auth', 'admin', 'lang');
@@ -131,8 +131,8 @@ Route::post('/add-ward', ['as' => 'add-ward', 'uses' => 'WardController@createWa
 Route::get('/wards', ['as' => 'wards', 'uses' => 'WardController@index'])->middleware('auth', 'lang');
 
 // Other Routes
-Route::get('/herbs', ['as' => 'herbs', 'uses' => 'MedicineController@getherbs']);
-Route::get('/wardlist', 'PatientController@get_ward_list');
+Route::get('/herbs', ['as' => 'herbs', 'uses' => 'MedicineController@getherbs'])->middleware('auth');
+Route::get('/wardlist', 'PatientController@get_ward_list')->middleware(['auth','staff']);
 
 // Statistics Routes
 Route::get('/stats', ['as' => 'stats', 'uses' => 'AnalyticsController@index'])->middleware('doctor', 'admin');

@@ -443,7 +443,7 @@ $is_rtl = ($app_locale === 'ar');
                         <ul class="treeview-menu">
                             <li class="{{Active::checkRoute('myattend')}}"><a href="{{route('myattend')}}"><i
                                         class="fas fa-calendar-day" aria-hidden="true"></i>&nbsp; {{ __('My Attendance') }}</a></li>
-                            @if($user_type=='Admssin')
+                            @if($user_type=='Admin')
                             <li class="{{Active::checkRoute('attendmore')}}"><a href="{{route('attendmore')}}"><i
                                         class="fas fa-plus-square" aria-hidden="true"></i>&nbsp; {{ __('More') }}</a></li>
                             @endif

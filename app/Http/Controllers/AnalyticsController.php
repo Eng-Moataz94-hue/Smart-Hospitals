@@ -15,10 +15,7 @@ class AnalyticsController extends Controller
 {
     //
     public function index(Request $request){
-        $year=date('Y');
-        if($request->has('year')){
-            $year=$request->year;    
-        }
+        $year=(int) $request->input('year', now()->year);
         $title="Statistics";
 
         //this month out patients
@@ -35,7 +32,7 @@ class AnalyticsController extends Controller
         
         $top_ten_meds=Medicine::orderBy('qty','DESC')->limit(10)->get();
 
-        $month=2;
+        $month=(int) $request->input('month', now()->month);
         $this_month_meds=Prescription_Medicine::thisMonthTrends($year,$month,10);
         
         // dd($this_month_meds);

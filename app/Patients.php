@@ -15,11 +15,6 @@ class Patients extends Model
 
     use SoftDeletes;
 
-    public function history()
-    {
-        return $this->hasMany('\App\Patient_History');
-    }
-
     public function getAge()
     {
         return Carbon::parse($this->attributes['bod'])->age;
@@ -35,8 +30,8 @@ class Patients extends Model
         $sex = ucfirst(strtolower($sex));
         $c = DB::table('patients')
             ->where('patients.sex', $sex)
-            ->whereRaw("MONTH(created_at)= $month")
-            ->whereRaw("YEAR(created_at)= $year")
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
             ->count();
 
         return $c;
@@ -45,8 +40,8 @@ class Patients extends Model
     public static function totalRegs($year, $month)
     {
         $c = DB::table('patients')
-            ->whereRaw("MONTH(created_at)= $month")
-            ->whereRaw("YEAR(created_at)= $year")
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
             ->count();
 
         return $c;

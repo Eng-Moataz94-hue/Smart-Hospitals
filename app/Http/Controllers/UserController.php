@@ -109,8 +109,8 @@ class UserController extends Controller
 
         $this->validate($request, [
             'currentpassword' => 'required',
-            'newpassword' => 'required|string|min:6',
-            'newpasswordagain' => 'required|string|min:6'
+            'newpassword' => 'required|string|min:8',
+            'newpasswordagain' => 'required|string|min:8'
         ]);
 
 

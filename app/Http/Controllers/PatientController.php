@@ -191,7 +191,7 @@ class PatientController extends Controller
             $rec = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
             ->select('patients.name as name', 'appointments.number as num', 'appointments.patient_id as pnum')
-            ->whereRaw(DB::Raw("Date(appointments.created_at)=CURDATE() and appointments.number='$num'"))->first();
+            ->whereRaw("Date(appointments.created_at)=CURDATE() and appointments.number=?", [$num])->first();
             if ($rec) {
                 return response()->json([
                     "exist" => true,
@@ -206,7 +206,7 @@ class PatientController extends Controller
                 ]);
             }
         } else { //this means the patient registration number has entered
-            $rec = DB::table('appointments')->join('patients', 'appointments.patient_id', '=', 'patients.id')->select('patients.name as name', 'appointments.number as num', 'appointments.patient_id as pnum')->whereRaw(DB::Raw("Date(appointments.created_at)=CURDATE() and completed='NO' and appointments.patient_id='$num'"))->first();
+            $rec = DB::table('appointments')->join('patients', 'appointments.patient_id', '=', 'patients.id')->select('patients.name as name', 'appointments.number as num', 'appointments.patient_id as pnum')->whereRaw("Date(appointments.created_at)=CURDATE() and completed='NO' and appointments.patient_id=?", [$num])->first();
             if ($rec) {
                 return response()->json([
                     "exist" => true,
@@ -450,7 +450,7 @@ class PatientController extends Controller
             $patient = DB::table('patients')
             ->join('appointments', 'patients.id', '=', 'appointments.patient_id')
             ->select('patients.id as id', 'patients.name as name', 'patients.sex as sex', 'patients.address as address', 'patients.occupation as occ', 'patients.telephone as tel', 'patients.nic as nic', 'appointments.admit as ad', 'patients.bod as bod','appointments.number as appnum','appointments.doctor_id as D1', 'patients.updated_at')
-            ->whereRaw(DB::Raw("appointments.admit='YES' and appointments.number='$pNum'"))
+            ->where("appointments.admit", "YES")->where("appointments.number", $pNum)
             ->first();
 
             if ($patient) {
@@ -479,7 +479,7 @@ class PatientController extends Controller
         $patient = DB::table('patients')
                         ->join('appointments', 'patients.id', '=', 'appointments.patient_id')
                         ->select('patients.id as id', 'patients.name as name', 'patients.sex as sex', 'patients.address as address', 'patients.occupation as occ', 'patients.telephone as tel', 'patients.nic as nic', 'appointments.admit as ad', 'patients.bod as bod','appointments.number as appnum','appointments.doctor_id as D1')
-                        ->whereRaw(DB::Raw("appointments.admit='YES' and patients.id='$pNum'"))
+                        ->where("appointments.admit", "YES")->where("patients.id", $pNum)
                         ->first();
         if ($patient) {
 
@@ -561,7 +561,7 @@ class PatientController extends Controller
         $inpatient = DB::table('patients')
                         ->join('inpatients', 'patients.id', '=', 'inpatients.patient_id')
                         ->select('inpatients.patient_id as id', 'patients.name as name', 'patients.address as address', 'patients.telephone as tel', 'inpatients.discharged as dis')
-                        ->whereRaw(DB::Raw("inpatients.patient_id='$pNum' and inpatients.discharged='NO'"))
+                        ->where("inpatients.patient_id", $pNum)->where("inpatients.discharged", "NO")
                         ->first();
 
         if ($inpatient) {

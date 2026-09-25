@@ -25,9 +25,9 @@ class Appointment extends Model
         $c = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
             ->where('patients.sex', $sex)
-            ->whereRaw("MONTH(appointments.created_at)= $month")
-            ->whereRaw("YEAR(appointments.created_at)= $year")
-            ->whereRaw("appointments.admit= '$type'")
+            ->whereMonth('appointments.created_at', $month)
+            ->whereYear('appointments.created_at', $year)
+            ->where('appointments.admit', $type)
             ->count('appointments.id');
 
         return $c;
@@ -42,9 +42,9 @@ class Appointment extends Model
         }
         $c = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
-            ->whereRaw("`admit`='$type'")
-            ->whereRaw("MONTH(appointments.created_at)= $month")
-            ->whereRaw("YEAR(appointments.created_at)= $year")
+            ->where('appointments.admit', $type)
+            ->whereMonth('appointments.created_at', $month)
+            ->whereYear('appointments.created_at', $year)
             ->count();
         return $c;
     }

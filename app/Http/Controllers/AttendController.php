@@ -14,17 +14,18 @@ class AttendController extends Controller
     public function myattend(Request $request)
     {
         if ($request->has('year')) {
+            $year = (int) $request->input('year');
             $rec = DB::table('attendances')
                 ->select(DB::raw('user_id,DATE(start) as date, MONTH(start) as month,DAY(start) as day ,YEAR(start) as year, sum(TIMESTAMPDIFF(MINUTE,start,end))/60 as duration'))
                 ->where('user_id', \Auth::user()->id)
-                ->whereRaw("YEAR(created_at)=$request->year")
+                ->whereYear('created_at', $year)
                 ->whereRaw(DB::raw('end is not null'))
                 ->orderBy('created_at', 'desc')->groupBy('date')->get();
 
             $rec_more = DB::table('attendances')
                 ->select(DB::raw('user_id,DATE(created_at) as date,TIME(start) as start,TIME(end) as end, MONTH(created_at) as month,DAY(created_at) as day ,YEAR(created_at) as year, TIMESTAMPDIFF(MINUTE,start,end)/60 as duration'))
                 ->where('user_id', \Auth::user()->id)
-                ->whereRaw("YEAR(created_at)=$request->year")
+                ->whereYear('created_at', $year)
                 // ->whereRaw("MONTH(created_at)=MONTH(CURDATE())")
                 ->whereRaw(DB::raw('end is not null'))
                 ->orderBy('created_at', 'desc')->get();
@@ -67,8 +68,9 @@ class AttendController extends Controller
 
         if (User::where('fingerprint', $finger_id)->exists()) { //updating the end time of a attendance record
             $user = User::where('fingerprint', $finger_id)->first();
-            if (DB::table('attendances')->whereRaw(DB::raw("user_id='$user->id' and date(start)=date('$timestamp') and end is null"))->exists()) {
-                $rec = DB::table('attendances')->whereRaw(DB::raw("user_id='$user->id' and date(start)=date('$timestamp') and end is null"))->orderBy('start', 'asc')->first();
+            $attDate = date('Y-m-d', strtotime($timestamp));
+            if (DB::table('attendances')->where('user_id', $user->id)->whereDate('start', $attDate)->whereNull('end')->exists()) {
+                $rec = DB::table('attendances')->where('user_id', $user->id)->whereDate('start', $attDate)->whereNull('end')->orderBy('start', 'asc')->first();
                 $x = Attendance::where('id', $rec->id)->first();
                 $x->end = $timestamp;
                 $x->save();
