@@ -433,6 +433,11 @@ $is_rtl = ($app_locale === 'ar');
                     <li class="{{Active::checkRoute('issueMedicineView')}}"><a href="{{route('issueMedicineView')}}"><i
                                 class="fa fa-plus-square"></i><span>{{ __('Issue Medicine') }}</span></a></li>
                     @endif
+                    @if($user_type=='Pharmacist' || $user_type=='Admin')
+                    {{--Medicine Stock--}}
+                    <li class="{{Active::checkRoute('medicine_stocks')}}"><a href="{{route('medicine_stocks')}}"><i
+                                class="fa fa-cubes"></i><span>{{ __('Medicine Stock') }}</span></a></li>
+                    @endif
 
                     <li class="treeview {{Active::checkRoute(['attendmore','myattend'])}}">
                         <a href="#"><i class="fas fa-calendar-check"></i></i><span> {{ __('Attendance') }}</span>

@@ -8,6 +8,7 @@ use App\Prescription;
 use App\Appointment;
 //use Illuminate\Support\Facades\Storage;
 use App\Prescription_Medicine;
+use App\MedicineStock;
 //use App\Appointment;
 //use File;
 use DB;
@@ -26,19 +27,59 @@ class MedicineController extends Controller
     public function markIssued(Request $request){
         try {
             $pres_med=Prescription_Medicine::find($request->medid);
+            if (!$pres_med) {
+                return response()->json([
+                    "code"=>400,
+                    "prescription"=>$request->medid,
+                ]);
+            }
+            $med=Medicine::find($pres_med->medicine_id);
+            $picked=DB::transaction(function () use ($pres_med) {
+                $need=1;
+                $batches=MedicineStock::where('medicine_id', $pres_med->medicine_id)
+                    ->usable()
+                    ->orderByRaw('ISNULL(expiry_date), expiry_date ASC')
+                    ->lockForUpdate()
+                    ->get();
+                $picked=[];
+                foreach ($batches as $batch) {
+                    $take=min($batch->quantity, $need);
+                    $batch->decrement('quantity', $take);
+                    $need-=$take;
+                    $picked[]=['batch_id'=>$batch->id, 'batch_number'=>$batch->batch_number, 'taken'=>$take, 'remaining'=>($batch->quantity-$take)];
+                    if ($need<=0) {
+                        break;
+                    }
+                }
+                if ($need>0) {
+                    throw new \Exception('OUT_OF_STOCK');
+                }
+                return $picked;
+            });
             $pres_med->issued="YES";
             $pres_med->save();
-            $med=Medicine::find($pres_med->medicine_id);
             $med->qty+=1;
             $med->save();
+            // Log Activity
+            activity()->performedOn($pres_med)->withProperties(['Medicine ID' => $med->id, 'Batches' => $picked])->log('Medicine Issued with Stock Deduction');
             return response()->json([
                 "code"=>200,
                 "prescription"=>$request->medid,
             ]);
         } catch (\Throwable $th) {
+            $reason='ERROR';
+            if ($th->getMessage()==='OUT_OF_STOCK' && isset($pres_med) && $pres_med) {
+                $hasExpired=MedicineStock::where('medicine_id', $pres_med->medicine_id)
+                    ->where('quantity', '>', 0)
+                    ->whereNotNull('expiry_date')
+                    ->where('expiry_date', '<', now()->toDateString())
+                    ->exists();
+                $reason=$hasExpired ? 'EXPIRED_ONLY' : 'OUT_OF_STOCK';
+            }
             return response()->json([
                 "code"=>400,
                 "prescription"=>$request->medid,
+                "reason"=>$reason,
             ]);
         }
         
@@ -138,6 +179,29 @@ class MedicineController extends Controller
         }
 
         
+    }
+
+    public function stockIndex(){
+        $title="Medicine Stock";
+        $today=now()->toDateString();
+        $soon=now()->addDays(30)->toDateString();
+        $lowThreshold=10;
+        $medicines=Medicine::orderBy('name_english')->get();
+        $rows=[];
+        $outCount=0;
+        $lowCount=0;
+        foreach ($medicines as $medicine) {
+            $total=$medicine->getTotalStock();
+            $batches=$medicine->stocks()->orderByRaw('ISNULL(expiry_date), expiry_date ASC')->get();
+            if ($total<=0) {
+                $outCount++;
+            } elseif ($total<$lowThreshold) {
+                $lowCount++;
+            }
+            $rows[]=['medicine'=>$medicine, 'total'=>$total, 'batches'=>$batches];
+        }
+        $expiringCount=MedicineStock::available()->whereNotNull('expiry_date')->whereBetween('expiry_date', [$today, $soon])->count();
+        return view('medicine.stocks', compact('title','rows','outCount','lowCount','expiringCount','lowThreshold','today','soon'));
     }
 
   

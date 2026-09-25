@@ -63,6 +63,7 @@ Route::post('/issuemed-validate', ['as' => 'issueMedicine2', 'uses' => 'Medicine
 Route::get('/issue/{presid}', ['as' => 'issue', 'uses' => 'MedicineController@issueMedicine'])->middleware('auth', 'pharmacist', 'lang');
 Route::post('/issuemark', ['as' => 'markIssued', 'uses' => 'MedicineController@markIssued'])->middleware('auth', 'pharmacist', 'lang');
 Route::get('/med-issue-save', ['as' => 'medIssueSave', 'uses' => 'MedicineController@medIssueSave'])->middleware('auth', 'pharmacist', 'lang');
+Route::get('/medicine-stocks', ['as' => 'medicine_stocks', 'uses' => 'MedicineController@stockIndex'])->middleware('auth', 'pharmacist', 'lang');
 
 // Check Patient Routes
 Route::get('/checkpatient', ['as' => 'check_patient_view', 'uses' => 'PatientController@checkPatientView'])->middleware('auth', 'doctor', 'lang');

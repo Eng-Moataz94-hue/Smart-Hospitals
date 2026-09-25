@@ -169,6 +169,12 @@ use App\Prescription_Medicine;
                 success: function (response) {
                   if(response.code==200){
                       $("#td-issue-"+med_id).html('<span style="font-size:14px" class="badge bg-green"><i class="fas fa-check"></i> {{ __('Issued') }} </span>');
+                  } else if(response.reason=='OUT_OF_STOCK'){
+                      alert("{{ __('Out of stock') }}");
+                  } else if(response.reason=='EXPIRED_ONLY'){
+                      alert("{{ __('Only expired batches available') }}");
+                  } else {
+                      alert("{{ __('Issue failed') }}");
                   }
                 }
         });
