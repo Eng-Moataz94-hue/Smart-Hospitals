@@ -14,6 +14,12 @@
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
+            </div>
+        @endif
         @if(session('success'))
             <div class="alert alert-success">{{session('success')}}</div>
         @endif

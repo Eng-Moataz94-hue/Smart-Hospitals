@@ -284,6 +284,8 @@
     "Select Patient": "اختر المريض",
     "Invoice Details": "تفاصيل الفاتورة",
     "Show": "عرض",
+    "Invoice not found. It may have been deleted.": "الفاتورة غير موجودة. ربما تم حذفها.",
+    "PDF generation failed. Please try again.": "فشل توليد PDF. الرجاء المحاولة مرة أخرى.",
     "Appointment": "حجز موعد",
     "Consultation": "كشف طبي",
     "Ward": "رقود",

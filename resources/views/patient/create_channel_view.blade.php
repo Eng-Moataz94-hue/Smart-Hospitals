@@ -211,14 +211,43 @@
             data:data,
             success: function (response) {
                 if (response.invoice_id) {
-                    var html = '<div class="alert alert-success" style="margin-top:15px;">تم حجز الموعد. <a href="/invoices/' + response.invoice_id + '/pdf" target="_blank" class="btn btn-danger btn-sm"><i class="fas fa-print"></i> اطبع الفاتورة</a></div>';
+                    var html = '<div class="alert alert-success" style="margin-top:15px;" id="success-alert">' +
+                               '<i class="fas fa-check-circle"></i> ' +
+                               'تم حجز الموعد رقم <strong>' + response.appNum + '</strong> للمريض <strong>' + response.name + '</strong>. ' +
+                               '<a href="/invoices/' + response.invoice_id + '/pdf" target="_blank" class="btn btn-danger btn-sm">' +
+                               '<i class="fas fa-print"></i> اطبع الفاتورة</a> ' +
+                               '<button type="button" class="btn btn-info btn-sm" onclick="resetChannelForm()">' +
+                               '<i class="fas fa-plus"></i> حجز موعد آخر</button>' +
+                               '</div>';
                     $('#createchannel3').after(html);
-                    setTimeout(function(){ location.reload(); }, 4000);
+                    $('#createchannel1').slideUp();
+                    $('#createchannel2').slideUp();
                 } else {
+                    alert('تم حجز الموعد لكن فشل توليد الفاتورة');
                     location.reload();
                 }
+            },
+            error: function(xhr) {
+                alert('خطأ في الاتصال بالخادم');
+                console.log(xhr);
             }
         });
+    }
+
+    function resetChannelForm() {
+        $('#success-alert').remove();
+        $('#createchannel1').slideDown();
+        $('#createchannel2').slideDown();
+        $('#p_reg_num').val('');
+        $('#patient_name').val('');
+        $('#patient_nic').val('');
+        $('#patient_address').val('');
+        $('#patient_telephone').val('');
+        $('#patient_occupation').val('');
+        $('#patient_age').val('');
+        $('#patient_sex').val('Male');
+        $("#makeBtn").show();
+        $('#p_reg_num').focus();
     }
 
     function createChannelFunction() {

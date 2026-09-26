@@ -150,9 +150,18 @@ class InvoiceController extends Controller
 
     public function pdf($id)
     {
-        $invoice = Invoice::with(['items', 'payments', 'patient', 'appointment'])->findOrFail($id);
-        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
-        return $pdf->download("invoice-{$invoice->invoice_number}.pdf");
+        try {
+            $invoice = Invoice::with(['items', 'payments', 'patient', 'appointment'])->findOrFail($id);
+            $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
+            return $pdf->download("invoice-{$invoice->invoice_number}.pdf");
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('invoices.index')
+                ->with('error', __('Invoice not found. It may have been deleted.'));
+        } catch (\Throwable $e) {
+            \Log::error('Invoice PDF failed: ' . $e->getMessage(), ['invoice_id' => $id]);
+            return redirect()->route('invoices.show', $id)
+                ->with('error', __('PDF generation failed. Please try again.'));
+        }
     }
 
     public function report(Request $request)
