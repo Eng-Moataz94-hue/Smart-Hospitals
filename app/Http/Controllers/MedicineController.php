@@ -91,6 +91,16 @@ class MedicineController extends Controller
             $presc->medicine_issued="YES";
             $presc->save();
             $medicines=Prescription_Medicine::where('prescription_id',$request->presid)->get();
+            try {
+                $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
+                $invoice = $invoiceCtrl->createForPatient($presc->patient_id, $presc->appointment_id);
+                foreach ($medicines as $med) {
+                    $medName = Medicine::find($med->medicine_id)->name_english ?? 'دواء';
+                    $invoiceCtrl->addMedicineItem($invoice, $medName);
+                }
+            } catch (\Throwable $e) {
+                \Log::error('Invoice auto-add medicines failed: ' . $e->getMessage());
+            }
             return view('medicine.receipt',compact('presc','medicines'));
         } catch (\Throwable $th) {
            return redirect()->back()->with('error',__("Unkown Error Occured"));

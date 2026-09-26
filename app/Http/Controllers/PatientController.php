@@ -404,6 +404,14 @@ class PatientController extends Controller
         // Log Activity
         activity()->performedOn($presc)->withProperties(['Patient ID' => $request->patient_id, 'Doctor ID' => $user->id, 'Prescription ID' => $presc->id, 'Appointment ID' => $request->appointment_id, 'Medicines' => json_encode($request->medicines)])->log('Check Patient Success');
 
+        try {
+            $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
+            $invoice = $invoiceCtrl->createForPatient($request->patient_id, $appointment->id ?? null);
+            $invoiceCtrl->addConsultationItem($invoice);
+        } catch (\Throwable $e) {
+            \Log::error('Invoice auto-create failed: ' . $e->getMessage());
+        }
+
         return http_response_code(200);
     }
 

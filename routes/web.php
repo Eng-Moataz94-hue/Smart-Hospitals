@@ -138,3 +138,15 @@ Route::get('/wardlist', 'PatientController@get_ward_list')->middleware(['auth','
 // Statistics Routes
 Route::get('/stats', ['as' => 'stats', 'uses' => 'AnalyticsController@index'])->middleware('doctor', 'admin');
 Route::post('/stats-old', ['as' => 'stats_old', 'uses' => 'AnalyticsController@index'])->middleware('doctor', 'admin');
+
+// Invoice Routes
+Route::get('/invoices', 'InvoiceController@index')->name('invoices.index')->middleware('auth', 'staff', 'lang');
+Route::get('/invoices/create', 'InvoiceController@create')->name('invoices.create')->middleware('auth', 'staff', 'lang');
+Route::get('/invoices/report/monthly', 'InvoiceController@report')->name('invoices.report')->middleware('auth', 'admin', 'lang');
+Route::post('/invoices', 'InvoiceController@store')->name('invoices.store')->middleware('auth', 'staff');
+Route::get('/invoices/{id}', 'InvoiceController@show')->name('invoices.show')->middleware('auth', 'staff', 'lang');
+Route::post('/invoices/{id}/items', 'InvoiceController@addItem')->name('invoices.addItem')->middleware('auth', 'staff');
+Route::delete('/invoices/items/{itemId}', 'InvoiceController@removeItem')->name('invoices.removeItem')->middleware('auth', 'staff');
+Route::post('/invoices/{id}/payment', 'InvoiceController@recordPayment')->name('invoices.recordPayment')->middleware('auth', 'staff');
+Route::post('/invoices/{id}/paid', 'InvoiceController@markPaid')->name('invoices.markPaid')->middleware('auth', 'staff');
+Route::get('/invoices/{id}/pdf', 'InvoiceController@pdf')->name('invoices.pdf')->middleware('auth', 'staff', 'lang');

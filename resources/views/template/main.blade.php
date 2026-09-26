@@ -439,6 +439,13 @@ $is_rtl = ($app_locale === 'ar');
                                 class="fa fa-cubes"></i><span>{{ __('Medicine Stock') }}</span></a></li>
                     @endif
 
+                    @if($user_type=='Admin' || $user_type=='General' || $user_type=='Doctor')
+                    <li class="{{Active::checkRoute(['invoices.index', 'invoices.show', 'invoices.create'])}}">
+                        <a href="{{route('invoices.index')}}"><i class="fas fa-file-invoice-dollar"></i>
+                            <span>{{ __('Invoices') }}</span>
+                        </a>
+                    </li>
+                    @endif
                     <li class="treeview {{Active::checkRoute(['attendmore','myattend'])}}">
                         <a href="#"><i class="fas fa-calendar-check"></i></i><span> {{ __('Attendance') }}</span>
                             <span class="pull-right-container">
