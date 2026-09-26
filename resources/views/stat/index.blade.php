@@ -98,10 +98,10 @@
                             @csrf
                             <label for="year">{{ __('Select Different Year') }}</label>
                             <div class="input-group input-group">
-                                <select class="form-control" name="year" id="year">
-                                    <option @if($year==2018) selected @endif value="2018">2018</option>
-                                    <option @if($year==2019) selected @endif value="2019">2019</option>
-                                    <option @if($year==2020) selected @endif value="2020">2020</option>
+                                <select name="year" class="form-control" id="year">
+                                    @foreach($availableYears as $y)
+                                        <option value="{{$y}}" @if((int)request('year', $year) === (int)$y) selected @endif>{{$y}}</option>
+                                    @endforeach
                                 </select>
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn-info btn-flat">{{ __('Fetch') }} <i

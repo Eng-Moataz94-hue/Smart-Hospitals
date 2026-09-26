@@ -34,7 +34,17 @@ class AnalyticsController extends Controller
 
         $month=(int) $request->input('month', now()->month);
         $this_month_meds=Prescription_Medicine::thisMonthTrends($year,$month,10);
-        
+
+        $availableYears = DB::table('appointments')
+            ->selectRaw('YEAR(created_at) as y')
+            ->distinct()
+            ->orderBy('y', 'desc')
+            ->pluck('y');
+
+        if ($availableYears->isEmpty()) {
+            $availableYears = collect([now()->year]);
+        }
+
         // dd($this_month_meds);
         return view('stat.index',compact(
             'year',
@@ -44,7 +54,8 @@ class AnalyticsController extends Controller
             'total_checkings_this_month',
             'out_patients_this_month',
             'top_ten_meds',
-            'this_month_meds'
+            'this_month_meds',
+            'availableYears'
         ));
 
     }
