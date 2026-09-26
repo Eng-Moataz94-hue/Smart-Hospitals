@@ -21,6 +21,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">
                     {{__('Invoice')}} {{$invoice->invoice_number}}
+                    <span class="label label-info">{{$invoice->type_label}}</span>
                     @if($invoice->status=='paid')<span class="badge bg-green">{{__('Paid')}}</span>
                     @elseif($invoice->status=='partial')<span class="badge bg-yellow">{{__('Partial')}}</span>
                     @else<span class="badge bg-red">{{__('Unpaid')}}</span>@endif

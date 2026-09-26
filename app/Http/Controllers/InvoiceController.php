@@ -21,9 +21,8 @@ class InvoiceController extends Controller
     {
         $q = Invoice::with('patient')->orderBy('id', 'desc');
         
-        if ($request->filled('status') && $request->status !== 'all') {
-            $q->where('status', $request->status);
-        }
+        if ($request->filled('status') && $request->status !== 'all') { $q->where('status', $request->status); }
+        if ($request->filled('type') && $request->type !== 'all') { $q->where('invoice_type', $request->type); }
         if ($request->filled('from')) {
             $q->whereDate('created_at', '>=', $request->from);
         }
@@ -185,23 +184,15 @@ class InvoiceController extends Controller
 
     // ============ دوال داخلية للربط التلقائي ============
 
-    public function createForPatient($patientId, $appointmentId = null)
+    public function createForPatient($patientId, $appointmentId = null, $invoiceType = 'consultation')
     {
-        $invoice = Invoice::where('patient_id', $patientId)
-            ->whereDate('created_at', today())
-            ->where('status', '!=', 'paid')
-            ->latest()
-            ->first();
-
-        if (!$invoice) {
-            $invoice = Invoice::create([
-                'invoice_number' => Invoice::generateNumber(),
-                'patient_id' => $patientId,
-                'appointment_id' => $appointmentId,
-                'issued_at' => now(),
-            ]);
-        }
-        return $invoice;
+        return Invoice::create([
+            'invoice_number' => Invoice::generateNumber(),
+            'patient_id'     => $patientId,
+            'appointment_id' => $appointmentId,
+            'invoice_type'   => $invoiceType,
+            'issued_at'      => now(),
+        ]);
     }
 
     public function addConsultationItem($invoice)
@@ -222,5 +213,15 @@ class InvoiceController extends Controller
             'quantity' => 1,
             'unit_price' => 500.00,
         ]);
+    }
+
+    public function addAppointmentItem($invoice)
+    {
+        InvoiceItem::create(['invoice_id' => $invoice->id, 'description' => 'حجز موعد', 'quantity' => 1, 'unit_price' => 1000.00]);
+    }
+
+    public function addWardItem($invoice, $wardNo, $days = 1)
+    {
+        InvoiceItem::create(['invoice_id' => $invoice->id, 'description' => 'يومية سرير - جناح ' . $wardNo, 'quantity' => $days, 'unit_price' => 10000.00]);
     }
 }

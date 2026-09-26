@@ -406,10 +406,10 @@ class PatientController extends Controller
 
         try {
             $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
-            $invoice = $invoiceCtrl->createForPatient($request->patient_id, $appointment->id ?? null);
+            $invoice = $invoiceCtrl->createForPatient($request->patient_id, $appointment->id ?? null, 'consultation');
             $invoiceCtrl->addConsultationItem($invoice);
         } catch (\Throwable $e) {
-            \Log::error('Invoice auto-create failed: ' . $e->getMessage());
+            \Log::error('Invoice auto-create (consultation) failed: ' . $e->getMessage());
         }
 
         return http_response_code(200);
@@ -543,6 +543,13 @@ class PatientController extends Controller
         $newFB = $getFB->free_beds-=1;
         Ward::where('ward_no', $request->reg_ipwardno)->update(['free_beds' => $newFB]);
 
+        try {
+            $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
+            $invoice = $invoiceCtrl->createForPatient($request->reg_pid, null, 'ward');
+            $invoiceCtrl->addWardItem($invoice, 'N/A', 1);
+        } catch (\Throwable $e) {
+            \Log::error('Invoice auto-create (ward) failed: ' . $e->getMessage());
+        }
       
         return redirect()->back()->with('regpsuccess', __("Inpatient Successfully Registered"));
     }
@@ -608,6 +615,26 @@ class PatientController extends Controller
         $newFB = $getFB->free_beds+=1;
         Ward::where('ward_no', $wardNo)->update(['free_beds' => $newFB]);
 
+        try {
+            $wardInvoice = \App\Invoice::where('patient_id', $pid)
+                ->where('invoice_type', 'ward')
+                ->where('status', '!=', 'paid')
+                ->latest()
+                ->first();
+
+            if ($wardInvoice) {
+                $wardInvoice->items()->where('description', 'like', 'يومية سرير%')->delete();
+                $inp = \App\inpatient::where('patient_id', $pid)->latest()->first();
+                if ($inp && $inp->created_at) {
+                    $days = max(1, (int) $inp->created_at->diffInDays(now()) + 1);
+                    $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
+                    $invoiceCtrl->addWardItem($wardInvoice, 'N/A', $days);
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Invoice ward-update failed: ' . $e->getMessage());
+        }
+
         return view('patient.discharge_recipt',compact('INPtableUpdate'))->with('regpsuccess', __("Inpatient Successfully Discharged"));;
         // }
         // catch(\Throwable $th){
@@ -652,6 +679,14 @@ public function addChannel(Request $request)
         $app->patient_id = $pid;
         $app->scheduled_at = $request->scheduled_at ?: now();
         $app->save();
+        $invoice = null;
+        try {
+            $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
+            $invoice = $invoiceCtrl->createForPatient($pid, $app->id, 'appointment');
+            $invoiceCtrl->addAppointmentItem($invoice);
+        } catch (\Throwable $e) {
+            \Log::error('Invoice auto-create (appointment) failed: ' . $e->getMessage());
+        }
         try {
             $app->save();
             return response()->json([
@@ -660,6 +695,7 @@ public function addChannel(Request $request)
                 'id' => $patient->id,
                 'appID' => $app->id,
                 'appNum' => $num,
+                'invoice_id' => $invoice ? $invoice->id : null,
             ]);
         } catch (\Throwable $th) {
             return response()->json([

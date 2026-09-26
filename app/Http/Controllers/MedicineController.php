@@ -93,13 +93,13 @@ class MedicineController extends Controller
             $medicines=Prescription_Medicine::where('prescription_id',$request->presid)->get();
             try {
                 $invoiceCtrl = new \App\Http\Controllers\InvoiceController();
-                $invoice = $invoiceCtrl->createForPatient($presc->patient_id, $presc->appointment_id);
+                $invoice = $invoiceCtrl->createForPatient($presc->patient_id, $presc->appointment_id, 'medicine');
                 foreach ($medicines as $med) {
                     $medName = Medicine::find($med->medicine_id)->name_english ?? 'دواء';
                     $invoiceCtrl->addMedicineItem($invoice, $medName);
                 }
             } catch (\Throwable $e) {
-                \Log::error('Invoice auto-add medicines failed: ' . $e->getMessage());
+                \Log::error('Invoice auto-create (medicine) failed: ' . $e->getMessage());
             }
             return view('medicine.receipt',compact('presc','medicines'));
         } catch (\Throwable $th) {

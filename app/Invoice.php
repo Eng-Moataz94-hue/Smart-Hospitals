@@ -7,9 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     protected $fillable = [
-        'invoice_number', 'patient_id', 'appointment_id',
+        'invoice_number', 'patient_id', 'appointment_id', 'invoice_type',
         'total_amount', 'paid_amount', 'status', 'issued_at', 'notes',
     ];
+
+    public function getTypeLabelAttribute()
+    {
+        $labels = ['appointment' => 'حجز موعد', 'consultation' => 'كشف طبي', 'medicine' => 'صرف أدوية', 'ward' => 'رقود', 'discharge' => 'خروج'];
+        return $labels[$this->invoice_type] ?? $this->invoice_type;
+    }
+
+    public function getTypeBadgeAttribute()
+    {
+        $badges = ['appointment' => 'bg-blue', 'consultation' => 'bg-green', 'medicine' => 'bg-purple', 'ward' => 'bg-orange', 'discharge' => 'bg-gray'];
+        return $badges[$this->invoice_type] ?? 'bg-default';
+    }
+
+    public function scopeOfType($query, $type)
+    {
+        return $query->where('invoice_type', $type);
+    }
 
     public function patient()
     {

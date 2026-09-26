@@ -32,6 +32,13 @@
                         <option value="partial" @if(request('status')=='partial') selected @endif>{{__('Partial')}}</option>
                         <option value="paid" @if(request('status')=='paid') selected @endif>{{__('Paid')}}</option>
                     </select>
+                    <select name="type" class="form-control">
+                        <option value="all">{{__('All Types')}}</option>
+                        <option value="appointment"  @if(request('type')=='appointment') selected @endif>{{__('Appointment')}}</option>
+                        <option value="consultation" @if(request('type')=='consultation') selected @endif>{{__('Consultation')}}</option>
+                        <option value="medicine"     @if(request('type')=='medicine') selected @endif>{{__('Medicine')}}</option>
+                        <option value="ward"         @if(request('type')=='ward') selected @endif>{{__('Ward')}}</option>
+                    </select>
                     <input type="date" name="from" class="form-control" value="{{request('from')}}">
                     <input type="date" name="to" class="form-control" value="{{request('to')}}">
                     <button type="submit" class="btn btn-primary">{{__('Filter')}}</button>
@@ -44,6 +51,7 @@
                     <thead>
                         <tr>
                             <th>{{__('Invoice Number')}}</th>
+                            <th>{{__('Type')}}</th>
                             <th>{{__('Patient')}}</th>
                             <th>{{__('Date')}}</th>
                             <th>{{__('Total Amount')}}</th>
@@ -57,6 +65,7 @@
                         @foreach ($invoices as $inv)
                         <tr>
                             <td>{{$inv->invoice_number}}</td>
+                            <td><span class="badge {{$inv->type_badge}}">{{$inv->type_label}}</span></td>
                             <td>{{$inv->patient->name ?? '-'}}</td>
                             <td>{{$inv->created_at->format('Y-m-d')}}</td>
                             <td>{{number_format($inv->total_amount, 2)}} YER</td>

@@ -19,6 +19,7 @@
     <div class="header">
         <h1>مستشفى الشفاء</h1>
         <h2>فاتورة رقم: {{$invoice->invoice_number}}</h2>
+        <h3 style="color:#555;">{{$invoice->type_label}}</h3>
         <div>التاريخ: {{$invoice->created_at->format('Y-m-d H:i')}}</div>
     </div>
     <p><strong>المريض:</strong> {{$invoice->patient->name ?? '-'}} ({{$invoice->patient->id ?? '-'}})</p>

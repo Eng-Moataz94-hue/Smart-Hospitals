@@ -210,7 +210,13 @@
             cache: false,
             data:data,
             success: function (response) {
-                location.reload();
+                if (response.invoice_id) {
+                    var html = '<div class="alert alert-success" style="margin-top:15px;">تم حجز الموعد. <a href="/invoices/' + response.invoice_id + '/pdf" target="_blank" class="btn btn-danger btn-sm"><i class="fas fa-print"></i> اطبع الفاتورة</a></div>';
+                    $('#createchannel3').after(html);
+                    setTimeout(function(){ location.reload(); }, 4000);
+                } else {
+                    location.reload();
+                }
             }
         });
     }
