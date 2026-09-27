@@ -34,6 +34,11 @@ class TeamMembersSeeder extends Seeder
                 'email' => 'anas.idrisi@shifa-hospital.com',
                 'contactnumber' => 778415554,
             ],
+            [
+                'name' => 'الحسين إسماعيل محمد أحمد الخياط',
+                'email' => 'alhussain.ismail@shifa-hospital.com',
+                'contactnumber' => 770000000,
+            ],
         ];
 
         foreach ($team as $member) {
