@@ -1,121 +1,233 @@
-/* ============================================================
-   Arabic RTL support for Hospital Management System
-   Loaded only when locale is 'ar'
-   Does not redesign anything; only mirrors the LTR layout.
-   ============================================================ */
+/* ============ RTL Fixes for AdminLTE 2 ============ */
 
-[dir="rtl"] {
+/* General */
+[dir="rtl"] body {
     direction: rtl;
     text-align: right;
 }
 
-[dir="rtl"] .wrapper {
+/* ============ Sidebar ============ */
+/* Sidebar — يلتصق باليمين بدل اليسار */
+[dir="rtl"] .main-sidebar {
+    right: 0;
+    left: auto;
+}
+
+/* Header — Logo على اليمين، Navbar يبدأ بعد Sidebar */
+[dir="rtl"] .main-header .logo {
+    float: right;
+    border-left: 1px solid #eee;
+    border-right: none;
+}
+
+[dir="rtl"] .main-header .navbar {
+    margin-right: 250px;   /* ← يبدأ بعد Sidebar (عرضه الفعلي 250px في هذا البناء) */
+    margin-left: 0;
+}
+
+/* Content Wrapper — يبدأ بعد Sidebar من اليمين */
+[dir="rtl"] .content-wrapper,
+[dir="rtl"] .main-footer {
+    margin-right: 250px;   /* ← القاعدة الأهم (عرض Sidebar الفعلي 250px) */
+    margin-left: 0;
+}
+
+/* User Menu في Header — يظهر على اليسار (مقابل EN) */
+[dir="rtl"] .navbar-custom-menu > .navbar-nav {
+    float: left;
+}
+
+[dir="rtl"] .navbar-nav > li {
+    float: right;
+}
+
+/* Dropdown — يفتح من اليسار لليمين */
+[dir="rtl"] .navbar-nav .open .dropdown-menu {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .dropdown-menu {
+    right: auto;
+    left: 0;
+    text-align: right;
+}
+
+/* قائمة المستخدم — انعكاس */
+[dir="rtl"] .user-menu > .dropdown-menu {
+    left: auto;
+    right: 0;
+}
+
+/* ============ Sidebar Menu ============ */
+[dir="rtl"] .sidebar-menu > li > a {
+    padding: 12px 15px 12px 5px;
+}
+
+[dir="rtl"] .sidebar-menu .pull-right-container {
+    float: left !important;
+    left: 10px;
+    right: auto;
+}
+
+[dir="rtl"] .sidebar-menu > li > a > .fa,
+[dir="rtl"] .sidebar-menu > li > a > .glyphicon,
+[dir="rtl"] .sidebar-menu > li > a > .ion {
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+/* ============ Pull Helpers ============ */
+[dir="rtl"] .pull-right {
+    float: left !important;
+}
+
+[dir="rtl"] .pull-left {
+    float: right !important;
+}
+
+/* ============ Small Boxes ============ */
+[dir="rtl"] .small-box .icon {
+    left: 10px;
+    right: auto;
+}
+
+[dir="rtl"] .small-box:hover .icon {
+    left: 10px;
+    right: auto;
+}
+
+/* ============ Cards / Info Box ============ */
+[dir="rtl"] .info-box-icon {
+    float: right;
+    border-top-left-radius: 0;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 0;
+}
+
+[dir="rtl"] .info-box-content {
+    margin-left: 0;
+    margin-right: 90px;
+}
+
+/* ============ Tables ============ */
+[dir="rtl"] table th,
+[dir="rtl"] table td {
+    text-align: right;
+}
+
+/* ============ Mobile — Sidebar يفتح من اليمين ============ */
+@media (max-width: 767px) {
+    [dir="rtl"] .main-sidebar {
+        transform: translateX(230px);
+    }
+    [dir="rtl"] .sidebar-open .main-sidebar {
+        transform: translateX(0);
+    }
+    [dir="rtl"] .main-header .navbar {
+        margin-right: 0;
+    }
+    [dir="rtl"] .content-wrapper,
+    [dir="rtl"] .main-footer {
+        margin-right: 0;
+    }
+}
+
+/* ============ Content Header (RTL) ============ */
+
+[dir="rtl"] .content-header {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] .content-header > h1 {
+    float: right;
+    text-align: right;
+    margin: 0 0 0 0;
+    padding-right: 0;
+}
+
+[dir="rtl"] .content-header > .breadcrumb {
+    float: left;
+    left: 15px;
+    right: auto;
+    text-align: left;
+    direction: ltr;
+}
+
+[dir="rtl"] .content-header > .breadcrumb > li {
+    float: left;
+}
+
+/* لمنع التداخل مع أي عنصر آخر */
+[dir="rtl"] .content-header::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* ============ Header Navbar (RTL) ============ */
+
+[dir="rtl"] .main-header .navbar {
     direction: rtl;
 }
 
-/* ---------- Text alignment helpers ---------- */
-[dir="rtl"] .text-left, [dir="rtl"] .pull-left { text-align: right; }
-[dir="rtl"] .text-right, [dir="rtl"] .pull-right { text-align: left; }
+/* Logo — يمين */
+[dir="rtl"] .main-header .logo {
+    float: right;
+    border-left: 1px solid rgba(0,0,0,.1);
+    border-right: none;
+}
 
-/* ---------- Sidebar ---------- */
-[dir="rtl"] .main-sidebar { right: 0; left: auto; }
-[dir="rtl"] .sidebar-mini.sidebar-collapse .main-sidebar { margin-right: 0; }
-[dir="rtl"] .sidebar-menu > li > a { border-right: none; border-left: 3px solid transparent; }
-[dir="rtl"] .sidebar-menu .treeview-menu { padding-left: 0; padding-right: 0; }
-[dir="rtl"] .sidebar-menu .treeview-menu > li > a { padding-left: 5px; padding-right: 40px; }
-
-/* ---------- Content wrapper ---------- */
-[dir="rtl"] .content-wrapper, [dir="rtl"] .main-footer {
+/* navbar-custom-menu (يحتوي: التاريخ + اللغة + User menu) — يدفع لليسار */
+[dir="rtl"] .main-header .navbar .navbar-custom-menu {
+    float: left;
     margin-left: 0;
-    margin-right: 230px;
+    margin-right: 0;
 }
 
+[dir="rtl"] .main-header .navbar .navbar-custom-menu > .navbar-nav {
+    float: left;
+}
+
+/* كل li في navbar-nav */
+[dir="rtl"] .main-header .navbar .navbar-nav > li {
+    float: right;
+    margin: 0;
+}
+
+/* li items: اللغة + User menu — مسافات صحيحة */
+[dir="rtl"] .main-header .navbar .navbar-nav > li > a {
+    padding: 15px 10px;
+    line-height: 20px;
+}
+
+/* user-menu dropdown */
+[dir="rtl"] .user-menu > .dropdown-menu {
+    left: auto;
+    right: 0;
+    text-align: right;
+}
+
+/* navbar-left إذا موجودة */
+[dir="rtl"] .main-header .navbar .navbar-left {
+    float: right;
+}
+
+[dir="rtl"] .main-header .navbar .navbar-right {
+    float: left;
+}
+
+/* mobile */
 @media (max-width: 767px) {
-    [dir="rtl"] .content-wrapper, [dir="rtl"] .main-footer { margin-right: 0; }
+    [dir="rtl"] .main-header .navbar .navbar-custom-menu {
+        float: left;
+    }
+    [dir="rtl"] .main-header .navbar .navbar-nav {
+        float: left;
+    }
+    [dir="rtl"] .main-header .navbar .navbar-nav > li {
+        float: right;
+    }
 }
-
-/* ---------- Header ---------- */
-[dir="rtl"] .main-header .navbar { margin-left: 0; margin-right: 230px; }
-@media (max-width: 767px) {
-    [dir="rtl"] .main-header .navbar { margin-right: 0; }
-}
-[dir="rtl"] .main-header .logo { float: right; }
-[dir="rtl"] .main-header .navbar-custom-menu { float: left; }
-[dir="rtl"] .main-header .navbar-static-top { float: left; }
-
-/* ---------- Sidebar toggle ---------- */
-[dir="rtl"] .sidebar-toggle { float: right; }
-
-/* ---------- Navbar items ---------- */
-[dir="rtl"] .navbar-custom-menu > .navbar-nav { float: right; margin-right: 0; }
-[dir="rtl"] .navbar-custom-menu .navbar-nav > li { float: right; }
-
-/* ---------- User panel in sidebar ---------- */
-[dir="rtl"] .user-panel > .image { float: right; margin-left: 10px; margin-right: 0; }
-[dir="rtl"] .user-panel > .info { float: right; padding-right: 60px; padding-left: 0; }
-
-/* ---------- Boxes / forms ---------- */
-[dir="rtl"] .form-horizontal .control-label { text-align: left; }
-[dir="rtl"] .box-footer .pull-right { float: left !important; }
-[dir="rtl"] .box-footer .pull-left { float: right !important; }
-[dir="rtl"] .input-group .input-group-addon:first-child,
-[dir="rtl"] .input-group > .form-control:first-child {
-    border-radius: 0 4px 4px 0;
-    border-left: 0;
-    border-right: 1px solid #d2d6de;
-}
-[dir="rtl"] .input-group .form-control:last-child,
-[dir="rtl"] .input-group-addon:last-child {
-    border-radius: 4px 0 0 4px;
-}
-
-/* ---------- Breadcrumbs ---------- */
-[dir="rtl"] .breadcrumb { float: right; padding: 7px 25px 7px 0; }
-[dir="rtl"] .breadcrumb > li + li:before {
-    content: "\f104";
-    font-family: 'FontAwesome';
-    padding: 0 5px;
-    color: #ccc;
-}
-
-/* ---------- Dropdown menus ---------- */
-[dir="rtl"] .navbar-nav > .dropdown-menu { left: 0; right: auto; }
-[dir="rtl"] .dropdown-menu > li > a { text-align: right; }
-[dir="rtl"] .user-menu > .dropdown-menu { left: 0; right: auto; }
-[dir="rtl"] .main-header .navbar-right .dropdown-menu { left: 0; right: auto; }
-[dir="rtl"] .messages-menu > .dropdown-menu { left: 0; right: auto; }
-
-/* ---------- Tables ---------- */
-[dir="rtl"] table.dataTable thead .sorting:after,
-[dir="rtl"] table.dataTable thead .sorting_asc:after,
-[dir="rtl"] table.dataTable thead .sorting_desc:after {
-    right: auto;
-    left: 8px;
-}
-[dir="rtl"] .dataTables_wrapper .dataTables_filter { float: left; }
-[dir="rtl"] .dataTables_wrapper .dataTables_length { float: right; }
-[dir="rtl"] .dataTables_wrapper .dataTables_info { float: right; padding-top: 0.55em; }
-
-/* ---------- Buttons in groups ---------- */
-[dir="rtl"] .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
-    border-radius: 0 4px 4px 0;
-}
-[dir="rtl"] .btn-group > .btn:last-child:not(:first-child), 
-[dir="rtl"] .btn-group > .dropdown-toggle:not(:first-child) {
-    border-radius: 4px 0 0 4px;
-}
-
-/* ---------- Tabs ---------- */
-[dir="rtl"] .nav-tabs-custom > .nav-tabs > li { float: right; }
-
-/* ---------- Misc fixes ---------- */
-[dir="rtl"] .checkbox, [dir="rtl"] .radio { padding-right: 20px; padding-left: 0; }
-[dir="rtl"] .checkbox label, [dir="rtl"] .radio label { padding-right: 0; }
-
-[dir="rtl"] .modal-title { text-align: right; }
-[dir="rtl"] .modal-body { text-align: right; }
-
-[dir="rtl"] .pagination { direction: ltr; }
-[dir="rtl"] .pagination > li { float: right; }
-
-[dir="rtl"] label { text-align: right; }
